@@ -1,0 +1,107 @@
+[
+  {
+    "id": "_126023_1",
+    "uuid": "fffa7a61bbdf4f3eae00820967b86cf7",
+    "userName": "q1547179",
+    "modified": "2025-06-04T06:36:18.608Z",
+    "systemRoleIds": [
+      "User"
+    ],
+    "name": {
+      "given": "Renzo",
+      "family": "Demuylder",
+      "preferredDisplayName": "GivenName"
+    },
+    "contact": {
+      "email": "renzo.demuylder@student.ucll.be"
+    },
+    "avatar": {
+      "viewUrl": "https://ultra.edu.kuleuven.cloud/learn/api/public/v1/users/_126023_1/avatar",
+      "source": "Default"
+    }
+  },
+  {
+    "id": "_74482_1",
+    "uuid": "584a5a5e986349dd90caad6071df491b",
+    "userName": "q1426958",
+    "modified": "2025-06-04T06:35:55.962Z",
+    "systemRoleIds": [
+      "User"
+    ],
+    "name": {
+      "given": "Rein",
+      "family": "Van Wanseele",
+      "preferredDisplayName": "GivenName"
+    },
+    "contact": {
+      "email": "rein.vanwanseele@student.ucll.be"
+    },
+    "avatar": {
+      "viewUrl": "https://ultra.edu.kuleuven.cloud/learn/api/public/v1/users/_74482_1/avatar",
+      "source": "Default"
+    }
+  },
+  {
+    "id": "_93038_1",
+    "uuid": "2d1b7db915e24ce984a61c6b8fd2d5b8",
+    "userName": "q1449689",
+    "modified": "2025-06-04T06:36:08.272Z",
+    "systemRoleIds": [
+      "User"
+    ],
+    "name": {
+      "given": "Lars",
+      "family": "François",
+      "preferredDisplayName": "GivenName"
+    },
+    "contact": {
+      "email": "lars.francois@student.ucll.be"
+    },
+    "avatar": {
+      "viewUrl": "https://ultra.edu.kuleuven.cloud/learn/api/public/v1/users/_93038_1/avatar",
+      "source": "Default"
+    }
+  },
+  {
+    "id": "_93757_1",
+    "uuid": "87297ec5b559413099f5aeca906348b1",
+    "userName": "q1489054",
+    "modified": "2025-06-04T06:36:10.811Z",
+    "systemRoleIds": [
+      "User"
+    ],
+    "name": {
+      "given": "Jasper",
+      "family": "Evens",
+      "preferredDisplayName": "GivenName"
+    },
+    "contact": {
+      "email": "jasper.evens1@student.ucll.be"
+    },
+    "avatar": {
+      "viewUrl": "https://ultra.edu.kuleuven.cloud/learn/api/public/v1/users/_93757_1/avatar",
+      "source": "Default"
+    }
+  },
+  {
+    "id": "_7330_1",
+    "uuid": "a17db13864144812aa90bfb025ed5d1e",
+    "userName": "q1618714",
+    "modified": "2025-06-04T06:36:22.251Z",
+    "systemRoleIds": [
+      "User"
+    ],
+    "name": {
+      "given": "Rezan",
+      "family": "Yavuz",
+      "preferredDisplayName": "GivenName"
+    },
+    "contact": {
+      "email": "rezan.yavuz@student.ucll.be"
+    },
+    "avatar": {
+      "viewUrl": "https://ultra.edu.kuleuven.cloud/learn/api/public/v1/users/_7330_1/avatar",
+      "source": "User"
+    }
+  }
+]
