@@ -6,6 +6,7 @@ data = fetch_student_data()
 emails = []
 
 for student in data['students']:
-    emails.append(student['email'])
+    if student['email'] != "pieter.geens@ucll.be":
+        emails.append(student['email'])
 
 execute_dns(emails)

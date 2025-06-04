@@ -5,6 +5,13 @@ from api_helper import api_get, api_post, api_put, api_delete
 
 def list_all_zones():
     zones = api_get("/zones")
+    print(f"Found {len(zones)} zones")
+    if not zones:
+        print("No zones found.")
+        return []
+    for zone in zones:
+        print(f"Found zone: {zone['name']}")
+    
     return [zone['name'] for zone in zones]
 
 def delete_all_sasm_zones():
@@ -32,46 +39,27 @@ def update_zone_remove_ns_ds(zone_name, exclude_patterns):
     if not zone:
         return
     
-    records = zone['records']
-    new_records = []
+    records = zone.get('rrsets', [])
     exclude_regex = re.compile(exclude_patterns)
+    new_records = []
 
     for record in records:
-        # Keep all except NS/DS that match exclude pattern
         if record['type'] in ['NS', 'DS']:
-            # record['name'] is FQDN
+            # Keep only if name matches exclude pattern
             if exclude_regex.search(record['name']):
-                new_records.append(record)  # keep if excluded
+                new_records.append(record)
             else:
-                # skipping record (deleting)
+                # Delete by not adding
                 continue
         else:
             new_records.append(record)
 
-    # Prepare data for PUT (replace records)
-    zone_data = {
-        "rrsets": []
-    }
-    # Group by name & type
-    grouped = {}
+    # Mark all kept records changetype REPLACE so API applies them properly
     for r in new_records:
-        key = (r['name'], r['type'], r['ttl'])
-        if key not in grouped:
-            grouped[key] = {
-                "name": r['name'],
-                "type": r['type'],
-                "ttl": r['ttl'],
-                "changetype": "REPLACE",
-                "records": []
-            }
-        grouped[key]["records"].append({
-            "content": r['records'][0]['content'],
-            "disabled": r['records'][0].get('disabled', False)
-        })
-    zone_data["rrsets"] = list(grouped.values())
+        r["changetype"] = "REPLACE"
 
-    print(f"Updating zone {zone_name} to remove NS/DS records except exclude pattern...")
-    api_put(f"/zones/{zone_name}", zone_data)
+    print(f"Updating zone {zone_name} to remove unwanted NS/DS records...")
+    api_put(f"/zones/{zone_name}", {"rrsets": new_records})
 
 def verify_zones(zones):
     print("Verifying zones...")
@@ -82,6 +70,11 @@ def verify_zones(zones):
             print(json.dumps(zone_data, indent=2))
 
 def create_slave_zone(zone_name, master_ipv4, master_ipv6):
+    # Do NOT append trailing dot unless API explicitly needs it
+    zone_name = zone_name.rstrip(".")
+    if get_zone(zone_name):
+        print(f"Zone {zone_name} already exists, skipping creation.")
+        return
     data = {
         "name": zone_name,
         "kind": "Slave",
@@ -93,22 +86,17 @@ def create_slave_zone(zone_name, master_ipv4, master_ipv6):
 
 def create_slave_zones_from_students(emails):
     print("Creating slave zones from emails list...")
-
     zones_to_create = set()
     for email in emails:
-        if "@" not in email or email.startswith("#"):
+        email = email.strip()
+        if not email or "@" not in email or email.startswith("#"):
             continue
-        
-        # Create zone name from email (replace '@' and '.' to avoid invalid DNS names)
         user, domain = email.split("@", 1)
         zone_name = f"{user.replace('.', '-')}.sasm.uclllabs.be"
-
-        # Use static or default IPs
-        default_ipv4 = "193.191.176.1"  # Replace with the master NS IPv4
-        default_ipv6 = "2001:6a8:2880:a020::1"  # Replace with the master NS IPv6
-
+        default_ipv4 = "193.191.176.1"
+        default_ipv6 = "2001:6a8:2880:a020::1"
         zones_to_create.add((zone_name, default_ipv4, default_ipv6))
-    
+
     for zone_name, ipv4, ipv6 in zones_to_create:
         try:
             create_slave_zone(zone_name, ipv4, ipv6)
@@ -122,44 +110,41 @@ def add_ns_records_parent_zone():
     if not zone:
         print(f"Parent zone {zone_name} does not exist.")
         return
-    
-    # Add NS record for slimme-rik
-    ns_rrset = {
-        "name": zone_name,
-        "type": "NS",
-        "ttl": 3600,
-        "changetype": "REPLACE",
-        "records": [
-            {"content": "ns1.uclllabs.be", "disabled": False},
-            {"content": "ns2.uclllabs.be", "disabled": False},
-            {"content": "ns.slimme-rik.sasm.uclllabs.be", "disabled": False}
-        ]
-    }
-    # Add A record for ns.slimme-rik (glue)
-    a_rrset = {
-        "name": "ns.slimme-rik." + zone_name,
-        "type": "A",
-        "ttl": 3600,
-        "changetype": "REPLACE",
-        "records": [{"content": "193.191.176.1", "disabled": False}]
-    }
-    # Add AAAA record for ns.slimme-rik (glue)
-    aaaa_rrset = {
-        "name": "ns.slimme-rik." + zone_name,
-        "type": "AAAA",
-        "ttl": 3600,
-        "changetype": "REPLACE",
-        "records": [{"content": "2001:6a8:2880:a020::1", "disabled": False}]
-    }
-    rrsets = [ns_rrset, a_rrset, aaaa_rrset]
 
-    # We must merge with existing rrsets or send a PUT with all records. For simplicity, replace/add these rrsets.
-    data = {
-        "rrsets": rrsets
+    rrsets = zone.get("rrsets", [])
+    # Prepare the new NS and glue records to add or update
+    wanted_rrsets = {
+        ("sasm.uclllabs.be", "NS"): [
+            "ns1.uclllabs.be",
+            "ns2.uclllabs.be",
+            "ns.slimme-rik.sasm.uclllabs.be"
+        ],
+        ("ns.slimme-rik.sasm.uclllabs.be", "A"): ["193.191.176.1"],
+        ("ns.slimme-rik.sasm.uclllabs.be", "AAAA"): ["2001:6a8:2880:a020::1"]
     }
 
-    print(f"Adding NS and glue records to parent zone {zone_name}")
-    api_put(f"/zones/{zone_name}", data)
+    # Build a map for quick lookup of rrsets by (name,type)
+    rrset_map = {(r["name"], r["type"]): r for r in rrsets}
+
+    for (name, rtype), contents in wanted_rrsets.items():
+        records = [{"content": c, "disabled": False} for c in contents]
+        if (name, rtype) in rrset_map:
+            rrset_map[(name, rtype)]["records"] = records
+            rrset_map[(name, rtype)]["changetype"] = "REPLACE"
+            rrset_map[(name, rtype)]["ttl"] = 3600
+        else:
+            rrset_map[(name, rtype)] = {
+                "name": name,
+                "type": rtype,
+                "ttl": 3600,
+                "changetype": "REPLACE",
+                "records": records
+            }
+
+    new_rrsets = list(rrset_map.values())
+
+    print(f"Adding/updating NS and glue records in parent zone {zone_name}")
+    api_put(f"/zones/{zone_name}", {"rrsets": new_rrsets})
 
 def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
     """
@@ -168,17 +153,33 @@ def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
     ptr_name: e.g. '1.176.191.193.in-addr.arpa'
     ptr_target: FQDN the PTR points to
     """
-    rrset = {
+    zone = get_zone(ipv4_ptr_zone)
+    if not zone:
+        print(f"PTR zone {ipv4_ptr_zone} does not exist.")
+        return
+
+    rrsets = zone.get("rrsets", [])
+    rrset_map = {(r["name"], r["type"]): r for r in rrsets}
+
+    # Build or replace PTR rrset
+    ptr_rrset = {
         "name": ptr_name,
         "type": "PTR",
         "ttl": 3600,
         "changetype": "REPLACE",
         "records": [{"content": ptr_target, "disabled": False}]
     }
-    print(f"Adding PTR record {ptr_name} -> {ptr_target}")
-    api_put(f"/zones/{ipv4_ptr_zone}", {"rrsets": [rrset]})
+
+    rrset_map[(ptr_name, "PTR")] = ptr_rrset
+
+    new_rrsets = list(rrset_map.values())
+
+    print(f"Adding/updating PTR record {ptr_name} -> {ptr_target}")
+    api_put(f"/zones/{ipv4_ptr_zone}", {"rrsets": new_rrsets})
 
 def execute_dns(students):
+    list_all_zones()
+    print("Starting DNS zone management...")
     delete_all_sasm_zones()
 
     # Remove NS/DS records except for '.*-.*|pieter|rudi' pattern
