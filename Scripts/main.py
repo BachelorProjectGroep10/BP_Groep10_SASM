@@ -1,9 +1,11 @@
 from student_scraper import fetch_student_data
+from execute_dns import execute_dns
 
 data = fetch_student_data()
 
-if data:
-    # Now you can use `data` as a Python dict
-    print(f"{len(data['students'])} studenten geladen.")
-    for student in data['students']:
-        print(f"{student['email']}")
+emails = []
+
+for student in data['students']:
+    emails.append(student['email'])
+
+execute_dns(emails)

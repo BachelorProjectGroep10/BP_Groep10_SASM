@@ -91,21 +91,23 @@ def create_slave_zone(zone_name, master_ipv4, master_ipv6):
     print(f"Creating slave zone {zone_name}")
     api_post("/zones", data)
 
-def create_slave_zones_from_students(filename):
-    print("Creating slave zones from students file...")
-    with open(filename) as f:
-        students = f.readlines()
-    
-    # Parse students to extract zone names, IPv4 and IPv6 (simplified example)
+def create_slave_zones_from_students(emails):
+    print("Creating slave zones from emails list...")
+
     zones_to_create = set()
-    for line in students:
-        if "@" in line and not line.startswith("#"):
-            parts = line.split()
-            if len(parts) < 4:
-                continue
-            name, surname, email, ip = parts[0], parts[1], parts[2], parts[3]
-            zone_name = f"{surname}-{name}.sasm.uclllabs.be"
-            zones_to_create.add((zone_name, ip, "2001:6a8:2880:a020::1"))  # IPv6 static for demo
+    for email in emails:
+        if "@" not in email or email.startswith("#"):
+            continue
+        
+        # Create zone name from email (replace '@' and '.' to avoid invalid DNS names)
+        user, domain = email.split("@", 1)
+        zone_name = f"{user.replace('.', '-')}.sasm.uclllabs.be"
+
+        # Use static or default IPs
+        default_ipv4 = "193.191.176.1"  # Replace with the master NS IPv4
+        default_ipv6 = "2001:6a8:2880:a020::1"  # Replace with the master NS IPv6
+
+        zones_to_create.add((zone_name, default_ipv4, default_ipv6))
     
     for zone_name, ipv4, ipv6 in zones_to_create:
         try:
@@ -176,7 +178,7 @@ def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
     print(f"Adding PTR record {ptr_name} -> {ptr_target}")
     api_put(f"/zones/{ipv4_ptr_zone}", {"rrsets": [rrset]})
 
-def main():
+def execute_dns(students):
     delete_all_sasm_zones()
 
     # Remove NS/DS records except for '.*-.*|pieter|rudi' pattern
@@ -192,7 +194,7 @@ def main():
     verify_zones(clean_zones)
 
     # Create slave zones from students file (adjust filename/path)
-    create_slave_zones_from_students("students")
+    create_slave_zones_from_students(students)
 
     # Create one specific slave zone
     create_slave_zone("slimme-rik.sasm.uclllabs.be", "193.191.176.1", "2001:6a8:2880:a020::1")
@@ -214,4 +216,4 @@ def main():
     print("Allow AXFR permission must be inserted directly in PowerDNS database.")
 
 if __name__ == "__main__":
-    main()
+    execute_dns()
