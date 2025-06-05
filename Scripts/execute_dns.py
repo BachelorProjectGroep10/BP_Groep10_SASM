@@ -1,7 +1,7 @@
 import json
 import re
 import requests
-from api_helper import api_get, api_post, api_put, api_delete
+from api_helper import api_get, api_patch, api_post, api_put, api_delete
 
 def list_all_zones():
     zones = api_get("/zones")
@@ -18,7 +18,7 @@ def delete_all_sasm_zones():
     print("Deleting all .sasm.uclllabs.be zones...")
     zones = list_all_zones()
     for zone in zones:
-        if zone.endswith(".sasm.uclllabs.be"):
+        if zone.endswith(".sasm.uclllabs.be."):
             print(f"Deleting zone {zone}")
             api_delete(f"/zones/{zone}")
 
@@ -59,7 +59,7 @@ def update_zone_remove_ns_ds(zone_name, exclude_patterns):
         r["changetype"] = "REPLACE"
 
     print(f"Updating zone {zone_name} to remove unwanted NS/DS records...")
-    api_put(f"/zones/{zone_name}", {"rrsets": new_records})
+    api_patch(f"/zones/{zone_name}", {"rrsets": new_records})
 
 def verify_zones(zones):
     print("Verifying zones...")
@@ -72,11 +72,12 @@ def verify_zones(zones):
 def create_slave_zone(zone_name, master_ipv4, master_ipv6):
     # Do NOT append trailing dot unless API explicitly needs it
     zone_name = zone_name.rstrip(".")
+    fqdn = zone_name + "."       
     if get_zone(zone_name):
         print(f"Zone {zone_name} already exists, skipping creation.")
         return
     data = {
-        "name": zone_name,
+        "name": fqdn,
         "kind": "Slave",
         "masters": [master_ipv4, master_ipv6],
         "nameservers": []
@@ -103,27 +104,32 @@ def create_slave_zones_from_students(emails):
         except requests.HTTPError as e:
             print(f"Failed creating zone {zone_name}: {e}")
 
+import json  # make sure this is at the top
+
 def add_ns_records_parent_zone():
     """Add NS and glue A/AAAA records to parent zone."""
     zone_name = "sasm.uclllabs.be"
     zone = get_zone(zone_name)
+
     if not zone:
-        print(f"Parent zone {zone_name} does not exist.")
+        print(f"❌ Parent zone {zone_name} does not exist.")
         return
 
+    print(f"✅ Found parent zone: {zone_name}")
+    print(f"🔍 Current rrsets in zone:")
+    print(json.dumps(zone.get("rrsets", []), indent=2))
+
     rrsets = zone.get("rrsets", [])
-    # Prepare the new NS and glue records to add or update
     wanted_rrsets = {
-        ("sasm.uclllabs.be", "NS"): [
-            "ns1.uclllabs.be",
-            "ns2.uclllabs.be",
-            "ns.slimme-rik.sasm.uclllabs.be"
+        ("sasm.uclllabs.be.", "NS"): [
+            "ns1.uclllabs.be.",
+            "ns2.uclllabs.be.",
+            "ns.slimme-rik.sasm.uclllabs.be."
         ],
-        ("ns.slimme-rik.sasm.uclllabs.be", "A"): ["193.191.176.1"],
-        ("ns.slimme-rik.sasm.uclllabs.be", "AAAA"): ["2001:6a8:2880:a020::1"]
+        ("ns.slimme-rik.sasm.uclllabs.be.", "A"): ["193.191.176.1"],
+        ("ns.slimme-rik.sasm.uclllabs.be.", "AAAA"): ["2001:6a8:2880:a020::1"]
     }
 
-    # Build a map for quick lookup of rrsets by (name,type)
     rrset_map = {(r["name"], r["type"]): r for r in rrsets}
 
     for (name, rtype), contents in wanted_rrsets.items():
@@ -143,8 +149,9 @@ def add_ns_records_parent_zone():
 
     new_rrsets = list(rrset_map.values())
 
-    print(f"Adding/updating NS and glue records in parent zone {zone_name}")
-    api_put(f"/zones/{zone_name}", {"rrsets": new_rrsets})
+    print(f"🚀 Adding/updating NS records in parent zone {zone_name}")
+    api_patch(f"/zones/{zone_name}", {"rrsets": new_rrsets})
+
 
 def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
     """
@@ -161,6 +168,9 @@ def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
     rrsets = zone.get("rrsets", [])
     rrset_map = {(r["name"], r["type"]): r for r in rrsets}
 
+    ptr_name = ptr_name if ptr_name.endswith('.') else f"{ptr_name}."
+    ptr_target = ptr_target if ptr_target.endswith('.') else f"{ptr_target}."
+
     # Build or replace PTR rrset
     ptr_rrset = {
         "name": ptr_name,
@@ -175,7 +185,7 @@ def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
     new_rrsets = list(rrset_map.values())
 
     print(f"Adding/updating PTR record {ptr_name} -> {ptr_target}")
-    api_put(f"/zones/{ipv4_ptr_zone}", {"rrsets": new_rrsets})
+    api_patch(f"/zones/{ipv4_ptr_zone}", {"rrsets": new_rrsets})
 
 def execute_dns(students):
     list_all_zones()
@@ -198,7 +208,7 @@ def execute_dns(students):
     create_slave_zones_from_students(students)
 
     # Create one specific slave zone
-    create_slave_zone("slimme-rik.sasm.uclllabs.be", "193.191.176.1", "2001:6a8:2880:a020::1")
+    create_slave_zone("slimme-rik.sasm.uclllabs.be.", "193.191.176.1", "2001:6a8:2880:a020::1")
 
     add_ns_records_parent_zone()
 
