@@ -1,5 +1,6 @@
 from student_scraper import fetch_student_data
 from execute_dns import execute_dns
+from verfiy_dns import verify_dns_changes
 
 data = fetch_student_data()
 
@@ -10,3 +11,5 @@ for student in data['students']:
         emails.append(student['email'])
 
 execute_dns(emails)
+
+verify_dns_changes(emails)
