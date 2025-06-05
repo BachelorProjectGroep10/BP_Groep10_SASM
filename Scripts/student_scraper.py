@@ -53,7 +53,7 @@ def fetch_student_data():
     student_ids = [
         user["userId"]
         for user in users_data.get("results", [])
-        if user.get("courseRoleId") == "Student"
+        if user.get("courseRoleId") == "Instructor" or user.get("courseRoleId") == "Student"
     ]
 
     print(f"{len(student_ids)} studenten gevonden.")

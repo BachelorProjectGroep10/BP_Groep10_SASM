@@ -1,0 +1,107 @@
+2025-06-05 16:49:03,322 - INFO - Found 3 zones
+2025-06-05 16:49:03,322 - INFO - Deleting all .sasm.uclllabs.be zones...
+2025-06-05 16:49:03,392 - INFO - Found 3 zones
+2025-06-05 16:49:03,472 - INFO - Removing NS record: sasm.uclllabs.be.
+2025-06-05 16:49:03,472 - INFO - Updating zone sasm.uclllabs.be to remove unwanted NS/DS records...
+2025-06-05 16:49:03,624 - INFO - Updating zone 176.191.193.in-addr.arpa to remove unwanted NS/DS records...
+2025-06-05 16:49:03,762 - INFO - Updating zone a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa to remove unwanted NS/DS records...
+2025-06-05 16:49:03,827 - INFO - Verifying zones...
+2025-06-05 16:49:03,827 - INFO - Zone: sasm.uclllabs.be
+2025-06-05 16:49:03,902 - INFO - {
+  "account": "",
+  "api_rectify": false,
+  "catalog": "",
+  "dnssec": false,
+  "edited_serial": 2024112505,
+  "id": "sasm.uclllabs.be.",
+  "kind": "Master",
+  "last_check": 0,
+  "master_tsig_key_ids": [],
+  "masters": [],
+  "name": "sasm.uclllabs.be.",
+  "notified_serial": 0,
+  "nsec3narrow": false,
+  "nsec3param": "",
+  "rrsets": [
+    {
+      "comments": [],
+      "name": "sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns1.uclllabs.be. hostmaster.uclllabs.be. 2024112505 3600 900 1209600 900",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "SOA"
+    },
+    {
+      "comments": [],
+      "name": "sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns1.uclllabs.be.",
+          "disabled": false
+        },
+        {
+          "content": "ns2.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    }
+  ],
+  "serial": 2024112505,
+  "slave_tsig_key_ids": [],
+  "soa_edit": "",
+  "soa_edit_api": "",
+  "url": "/api/v1/servers/localhost/zones/sasm.uclllabs.be."
+}
+2025-06-05 16:49:03,902 - INFO - Zone: 176.191.193.in-addr.arpa
+2025-06-05 16:49:03,974 - INFO - {
+  "account": "",
+  "api_rectify": false,
+  "catalog": "",
+  "dnssec": false,
+  "edited_serial": 0,
+  "id": "176.191.193.in-addr.arpa.",
+  "kind": "Master",
+  "last_check": 0,
+  "master_tsig_key_ids": [],
+  "masters": [],
+  "name": "176.191.193.in-addr.arpa.",
+  "notified_serial": 0,
+  "nsec3narrow": false,
+  "nsec3param": "",
+  "rrsets": [],
+  "serial": 0,
+  "slave_tsig_key_ids": [],
+  "soa_edit": "",
+  "soa_edit_api": "",
+  "url": "/api/v1/servers/localhost/zones/176.191.193.in-addr.arpa."
+}
+2025-06-05 16:49:03,974 - INFO - Zone: a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa
+2025-06-05 16:49:04,041 - INFO - {
+  "account": "",
+  "api_rectify": false,
+  "catalog": "",
+  "dnssec": false,
+  "edited_serial": 0,
+  "id": "a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa.",
+  "kind": "Master",
+  "last_check": 0,
+  "master_tsig_key_ids": [],
+  "masters": [],
+  "name": "a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa.",
+  "notified_serial": 0,
+  "nsec3narrow": false,
+  "nsec3param": "",
+  "rrsets": [],
+  "serial": 0,
+  "slave_tsig_key_ids": [],
+  "soa_edit": "",
+  "soa_edit_api": "",
+  "url": "/api/v1/servers/localhost/zones/a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa."
+}
+2025-06-05 16:49:04,041 - INFO - ------------------------------------------------------------
