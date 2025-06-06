@@ -1,67 +1,78 @@
 [
     {
         "original_email": "slimme.rik@student.ucll.be",
+        "hostname": "slimme-rik",
         "dns_zone": "slimme-rik.sasm.uclllabs.be",
         "ipv4": "193.191.176.1",
         "ipv6": "2001:6a8:2880:a020::1"
     },
     {
         "original_email": "maxim.audenaert@student.ucll.be",
+        "hostname": "maxim-audenaert",
         "dns_zone": "maxim-audenaert.sasm.uclllabs.be",
         "ipv4": "193.191.176.5",
         "ipv6": "2001:6a8:2880:a020::5"
     },
     {
         "original_email": "vincent.degreef@student.ucll.be",
+        "hostname": "vincent-degreef",
         "dns_zone": "vincent-degreef.sasm.uclllabs.be",
         "ipv4": "193.191.176.6",
         "ipv6": "2001:6a8:2880:a020::6"
     },
     {
         "original_email": "renzo.demuylder@student.ucll.be",
+        "hostname": "renzo-demuylder",
         "dns_zone": "renzo-demuylder.sasm.uclllabs.be",
         "ipv4": "193.191.176.7",
         "ipv6": "2001:6a8:2880:a020::7"
     },
     {
         "original_email": "jasper.evens1@student.ucll.be",
+        "hostname": "jasper-evens1",
         "dns_zone": "jasper-evens1.sasm.uclllabs.be",
         "ipv4": "193.191.176.8",
         "ipv6": "2001:6a8:2880:a020::8"
     },
     {
         "original_email": "lars.francois@student.ucll.be",
+        "hostname": "lars-francois",
         "dns_zone": "lars-francois.sasm.uclllabs.be",
         "ipv4": "193.191.176.9",
         "ipv6": "2001:6a8:2880:a020::9"
     },
     {
-        "original_email": "stef.sempels@student.ucll.be",
-        "dns_zone": "stef-sempels.sasm.uclllabs.be",
+        "original_email": "robin.huysegoms@ucll.be",
+        "hostname": "robin-huysegoms",
+        "dns_zone": "robin-huysegoms.sasm.uclllabs.be",
         "ipv4": "193.191.176.10",
         "ipv6": "2001:6a8:2880:a020::10"
     },
     {
-        "original_email": "rein.vanwanseele@student.ucll.be",
-        "dns_zone": "rein-vanwanseele.sasm.uclllabs.be",
+        "original_email": "stef.sempels@student.ucll.be",
+        "hostname": "stef-sempels",
+        "dns_zone": "stef-sempels.sasm.uclllabs.be",
         "ipv4": "193.191.176.11",
         "ipv6": "2001:6a8:2880:a020::11"
     },
     {
-        "original_email": "jenthe.vanzomeren@student.ucll.be",
-        "dns_zone": "jenthe-vanzomeren.sasm.uclllabs.be",
+        "original_email": "rein.vanwanseele@student.ucll.be",
+        "hostname": "rein-vanwanseele",
+        "dns_zone": "rein-vanwanseele.sasm.uclllabs.be",
         "ipv4": "193.191.176.12",
         "ipv6": "2001:6a8:2880:a020::12"
     },
     {
-        "original_email": "rezan.yavuz@student.ucll.be",
-        "dns_zone": "rezan-yavuz.sasm.uclllabs.be",
+        "original_email": "jenthe.vanzomeren@student.ucll.be",
+        "hostname": "jenthe-vanzomeren",
+        "dns_zone": "jenthe-vanzomeren.sasm.uclllabs.be",
         "ipv4": "193.191.176.13",
         "ipv6": "2001:6a8:2880:a020::13"
     },
     {
-        "original_email": "robin.huysegoms@ucll.be",
-        "dns_zone": "robin-huysegoms.sasm.uclllabs.be",
+        "original_email": "rezan.yavuz@student.ucll.be",
+        "hostname": "rezan-yavuz",
+        "dns_zone": "rezan-yavuz.sasm.uclllabs.be",
         "ipv4": "193.191.176.14",
         "ipv6": "2001:6a8:2880:a020::14"
     }

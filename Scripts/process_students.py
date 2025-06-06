@@ -38,9 +38,11 @@ def process_emails(new_email_list, output_file="Output/processed_Emails.json"):
         dns_zone_name = f"{first_name}-{last_name}.sasm.uclllabs.be"
         ipv4 = f"193.191.176.{start_index + i}"
         ipv6 = f"2001:6a8:2880:a020::{start_index + i}"
+        hostname = f"{first_name}-{last_name}"
 
         new_entries.append({
             "original_email": email,
+            "hostname": hostname,
             "dns_zone": dns_zone_name,
             "ipv4": ipv4,
             "ipv6": ipv6
