@@ -62,9 +62,9 @@ def verify_zones(zones):
     logging.info("Verifying zones...")
     for zone in zones:
         logging.info(f"Zone: {zone}")
-        zone_data = get_zone(zone)
-        if zone_data:
-            logging.info(json.dumps(zone_data, indent=2))
+        # zone_data = get_zone(zone)
+        # if zone_data:
+        #     logging.info(json.dumps(zone_data, indent=2))
 
 def create_slave_zone(zone_name, ipv4, ipv6):
     stripped_zone_name = zone_name.rstrip(".")
@@ -186,94 +186,128 @@ def add_ns_records_parent_zone_from_students(students):
         logging.info(f"✅ No changes needed. All NS and glue records are already present.")
 
 def ipv4_to_arpa(ipv4):
-    """Convert IPv4 address to full reverse PTR name."""
     return ".".join(reversed(ipv4.split("."))) + ".in-addr.arpa"
 
-
-
-def create_ptr_record(zone_name, full_ptr_name, ptr_target):
-    fqdn = ptr_target if ptr_target.endswith('.') else ptr_target + '.'
-    full_ptr_name = full_ptr_name if full_ptr_name.endswith('.') else full_ptr_name + '.'
-
-    rrset = {
-        "name": full_ptr_name,
-        "type": "PTR",
-        "ttl": 3600,
-        "changetype": "REPLACE",
-        "records": [{"content": fqdn, "disabled": False}]
-    }
-
-    logging.info(f"🔁 Adding PTR {full_ptr_name} → {fqdn} in zone {zone_name}")
-    api_patch(f"/zones/{zone_name}", {"rrsets": [rrset]})
-
 def ipv6_to_arpa(ipv6):
-    """Convert IPv6 address to full reverse PTR name (.ip6.arpa)."""
+    if not ipv6:
+        raise ValueError("Empty IPv6 address")
+
     ip = ipaddress.IPv6Address(ipv6)
     hex_digits = ip.exploded.replace(":", "")
     reversed_nibbles = ".".join(reversed(hex_digits))
     return reversed_nibbles + ".ip6.arpa"
 
-def create_ipv6_ptr_record(ptr_zone, ipv6_addr, ptr_target):
-    full_ptr_name = ipv6_to_arpa(ipv6_addr)
-    logging.debug(f"Calculated full_ptr_name: {full_ptr_name}")
-    logging.debug(f"Checking if {full_ptr_name} ends with {ptr_zone}")
+def create_ipv4_ptr_record(zone_name, full_ptr_name, ptr_target):
+    if ptr_target and ptr_target.strip():
+        fqdn = ptr_target if ptr_target.endswith('.') else ptr_target + '.'
+        full_ptr_name = full_ptr_name if full_ptr_name.endswith('.') else full_ptr_name + '.'
 
-    if not full_ptr_name.endswith(ptr_zone):
-        logging.warning(f"⚠️ Skipping {ipv6_addr}: not in PTR zone {ptr_zone}")
-        return
+        rrset = {
+            "name": full_ptr_name,
+            "type": "PTR",
+            "ttl": 3600,
+            "changetype": "REPLACE",
+            "records": [{"content": fqdn, "disabled": False}]
+        }
 
-    fqdn = ptr_target if ptr_target.endswith('.') else f"{ptr_target}."
-    ptr_rrset = {
-        "name": full_ptr_name + ".",
-        "type": "PTR",
-        "ttl": 3600,
-        "changetype": "REPLACE",
-        "records": [{"content": fqdn, "disabled": False}]
-    }
+        if not rrset["records"]:
+            logging.info(f"⚠️ Skipping IPv4 PTR record creation for {full_ptr_name} → {fqdn} in zone {zone_name} due to empty records list.")
+            return
+        
+        logging.info(f"🔁 Adding IPv4 PTR {full_ptr_name} → {fqdn} in zone {zone_name}")
+        api_patch(f"/zones/{zone_name}", {"rrsets": [rrset]})
 
-    logging.info(f"🔁 Adding/updating IPv6 PTR record {full_ptr_name} → {fqdn}")
-    api_patch(f"/zones/{ptr_zone}", {"rrsets": [ptr_rrset]})
 
-def create_ptr_records_from_students(students):
-    logging.info("Creating PTR records for all students...")
+def create_ipv6_ptr_record(zone_name, full_ptr_name, ptr_target):
+    if ptr_target and ptr_target.strip():
+        fqdn = ptr_target if ptr_target.endswith('.') else ptr_target + '.'
+        full_ptr_name = full_ptr_name if full_ptr_name.endswith('.') else full_ptr_name + '.'
+
+        rrset = {
+            "name": full_ptr_name,
+            "type": "PTR",
+            "ttl": 3600,
+            "changetype": "REPLACE",
+            "records": [{"content": fqdn, "disabled": False}]
+        }
+
+        if not rrset["records"]:
+            logging.info(f"⚠️ Skipping IPv6 PTR record creation for {full_ptr_name} → {fqdn} in zone {zone_name} due to empty records list.")
+            return
+        
+        logging.info(f"🔁 Adding IPv6 PTR {full_ptr_name} → {fqdn} in zone {zone_name}")
+        api_patch(f"/zones/{zone_name}", {"rrsets": [rrset]})
+
+def create_ipv4_ptr_records_from_students(students):
+    logging.info("Creating **IPv4** PTR records for all students...")
     ipv4_ptr_zone = "176.191.193.in-addr.arpa"
-    ipv6_ptr_zone = "a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa"
 
     for student in students:
         hostname = student.get("hostname")
         dns_zone = student.get("dns_zone")
         ipv4 = student.get("ipv4")
+
+        if not hostname or not dns_zone:
+            logging.warning(f"⚠️ Skipping student (missing hostname or dns_zone): {student}")
+            continue
+
+        ptr_target = f"mx.{dns_zone}"
+
+        if not ptr_target or ptr_target.strip() == ".":
+            logging.warning(f"⚠️ Skipping PTR target creation due to invalid ptr_target: '{ptr_target}' for student: {student}")
+            continue
+
+        if ipv4:
+            ptr_name = ipv4_to_arpa(ipv4)
+            if not ptr_name:
+                logging.warning(f"⚠️ Skipping IPv4 PTR due to empty ptr_name for IP {ipv4}")
+            elif ptr_name.endswith(ipv4_ptr_zone):
+                logging.debug(f"Creating IPv4 PTR record: zone={ipv4_ptr_zone}, ptr_name={ptr_name}, ptr_target={ptr_target}")
+                try:
+                    create_ipv4_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target)
+                except requests.HTTPError as e:
+                    logging.error(f"❌ Failed to create IPv4 PTR for {ipv4}: {e}")
+            else:
+                logging.warning(f"⚠️ Skipping IPv4 PTR {ipv4}, doesn't match zone {ipv4_ptr_zone}")
+
+
+def create_ipv6_ptr_records_from_students(students):
+    logging.info("Creating **IPv6** PTR records for all students...")
+    ipv6_ptr_zone = "a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa"
+
+    for student in students:
+        hostname = student.get("hostname")
+        dns_zone = student.get("dns_zone")
         ipv6 = student.get("ipv6")
 
         if not hostname or not dns_zone:
             logging.warning(f"⚠️ Skipping student (missing hostname or dns_zone): {student}")
             continue
 
-        # Construct target FQDN
-        zone_part = dns_zone.rstrip(".").replace(".uclllabs.be", "")
-        ptr_target = f"mx.{hostname}.{zone_part}.uclllabs.be."
+        if not ipv6:
+            logging.warning(f"⚠️ Skipping student with no IPv6 address: {student}")
+            continue
 
-        # ---- IPv4 PTR ----
-        if ipv4:
-            ptr_name = ipv4_to_arpa(ipv4)
-            if ptr_name.endswith(ipv4_ptr_zone):
-                try:
-                    create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target)
-                except requests.HTTPError as e:
-                    logging.error(f"❌ Failed to create IPv4 PTR for {ipv4}: {e}")
-            else:
-                logging.warning(f"⚠️ Skipping IPv4 PTR {ipv4}, doesn't match zone {ipv4_ptr_zone}")
-
-        # ---- IPv6 PTR ----
-        if ipv6:
+        try:
             ptr_name = ipv6_to_arpa(ipv6)
-            if ptr_name.endswith(ipv6_ptr_zone):
-                try:
-                    create_ptr_record(ipv6_ptr_zone, ptr_name, ptr_target)
-                except requests.HTTPError as e:
-                    logging.error(f"❌ Failed to create IPv6 PTR for {ipv6}: {e}")
-            else:
-                logging.warning(f"⚠️ Skipping IPv6 PTR {ipv6}, doesn't match zone {ipv6_ptr_zone}")
+        except Exception as e:
+            logging.warning(f"⚠️ Failed to convert IPv6 {ipv6} to PTR: {e}")
+            continue
+
+        if not ptr_name or not ptr_name.endswith(ipv6_ptr_zone):
+            logging.warning(f"⚠️ Skipping IPv6 PTR {ipv6}, doesn't match zone {ipv6_ptr_zone}")
+            continue
+
+        ptr_target = f"mx.{dns_zone}".strip()
+        if not ptr_target or ptr_target == ".":
+            logging.warning(f"⚠️ Invalid ptr_target '{ptr_target}' for student: {student}")
+            continue
+
+        logging.debug(f"Creating IPv6 PTR record: zone={ipv6_ptr_zone}, ptr_name={ptr_name}, ptr_target={ptr_target}")
+        try:
+            create_ipv6_ptr_record(ipv6_ptr_zone, ptr_name, ptr_target)
+        except requests.HTTPError as e:
+            logging.error(f"❌ Failed to create IPv6 PTR for {ipv6}: {e}")
 
 
 
@@ -305,7 +339,10 @@ def execute_dns():
     logging.info("Adding NS records and glue A/AAAA to parent zone sasm.uclllabs.be...")
     add_ns_records_parent_zone_from_students(students)
 
-    logging.info("🧠 Creating PTR records for all students...")
-    create_ptr_records_from_students(students)
+    # logging.info("🧠 Creating IPV4 PTR records for all students...")
+    # create_ipv4_ptr_records_from_students(students)
+
+    logging.info("🧠 Creating IPV6 PTR records for all students...")
+    create_ipv6_ptr_records_from_students(students)
 
     logging.info("-" * 60)
