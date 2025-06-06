@@ -1,5 +1,11 @@
 [
     {
+        "original_email": "slimme.rik@student.ucll.be",
+        "dns_zone": "slimme-rik.sasm.uclllabs.be",
+        "ipv4": "193.191.176.1",
+        "ipv6": "2001:6a8:2880:a020::1"
+    },
+    {
         "original_email": "maxim.audenaert@student.ucll.be",
         "dns_zone": "maxim-audenaert.sasm.uclllabs.be",
         "ipv4": "193.191.176.5",
@@ -52,5 +58,11 @@
         "dns_zone": "rezan-yavuz.sasm.uclllabs.be",
         "ipv4": "193.191.176.13",
         "ipv6": "2001:6a8:2880:a020::13"
+    },
+    {
+        "original_email": "robin.huysegoms@ucll.be",
+        "dns_zone": "robin-huysegoms.sasm.uclllabs.be",
+        "ipv4": "193.191.176.14",
+        "ipv6": "2001:6a8:2880:a020::14"
     }
 ]

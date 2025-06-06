@@ -1,13 +1,23 @@
-2025-06-05 16:49:03,322 - INFO - Found 3 zones
-2025-06-05 16:49:03,322 - INFO - Deleting all .sasm.uclllabs.be zones...
-2025-06-05 16:49:03,392 - INFO - Found 3 zones
-2025-06-05 16:49:03,472 - INFO - Removing NS record: sasm.uclllabs.be.
-2025-06-05 16:49:03,472 - INFO - Updating zone sasm.uclllabs.be to remove unwanted NS/DS records...
-2025-06-05 16:49:03,624 - INFO - Updating zone 176.191.193.in-addr.arpa to remove unwanted NS/DS records...
-2025-06-05 16:49:03,762 - INFO - Updating zone a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa to remove unwanted NS/DS records...
-2025-06-05 16:49:03,827 - INFO - Verifying zones...
-2025-06-05 16:49:03,827 - INFO - Zone: sasm.uclllabs.be
-2025-06-05 16:49:03,902 - INFO - {
+2025-06-06 10:46:49,568 - INFO - Found 13 zones
+2025-06-06 10:46:49,568 - INFO - Deleting all .sasm.uclllabs.be zones...
+2025-06-06 10:46:49,661 - INFO - Found 13 zones
+2025-06-06 10:46:49,661 - INFO - Deleting zone slimme-rik.sasm.uclllabs.be.
+2025-06-06 10:46:49,732 - INFO - Deleting zone maxim-audenaert.sasm.uclllabs.be.
+2025-06-06 10:46:49,797 - INFO - Deleting zone vincent-degreef.sasm.uclllabs.be.
+2025-06-06 10:46:49,875 - INFO - Deleting zone renzo-demuylder.sasm.uclllabs.be.
+2025-06-06 10:46:49,946 - INFO - Deleting zone jasper-evens1.sasm.uclllabs.be.
+2025-06-06 10:46:50,022 - INFO - Deleting zone lars-francois.sasm.uclllabs.be.
+2025-06-06 10:46:50,097 - INFO - Deleting zone stef-sempels.sasm.uclllabs.be.
+2025-06-06 10:46:50,174 - INFO - Deleting zone rein-vanwanseele.sasm.uclllabs.be.
+2025-06-06 10:46:50,237 - INFO - Deleting zone jenthe-vanzomeren.sasm.uclllabs.be.
+2025-06-06 10:46:50,309 - INFO - Deleting zone rezan-yavuz.sasm.uclllabs.be.
+2025-06-06 10:46:50,457 - INFO - Removing NS record: sasm.uclllabs.be.
+2025-06-06 10:46:50,457 - INFO - Updating zone sasm.uclllabs.be to remove unwanted NS/DS records...
+2025-06-06 10:46:50,654 - INFO - Updating zone 176.191.193.in-addr.arpa to remove unwanted NS/DS records...
+2025-06-06 10:46:50,790 - INFO - Updating zone a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa to remove unwanted NS/DS records...
+2025-06-06 10:46:50,857 - INFO - Verifying zones...
+2025-06-06 10:46:50,857 - INFO - Zone: sasm.uclllabs.be
+2025-06-06 10:46:50,931 - INFO - {
   "account": "",
   "api_rectify": false,
   "catalog": "",
@@ -23,6 +33,366 @@
   "nsec3narrow": false,
   "nsec3param": "",
   "rrsets": [
+    {
+      "comments": [],
+      "name": "ns.rezan-yavuz.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::13",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.rezan-yavuz.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.13",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "rezan-yavuz.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.rezan-yavuz.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.maxim-audenaert.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::5",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.maxim-audenaert.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.5",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "maxim-audenaert.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.maxim-audenaert.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.stef-sempels.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::10",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.stef-sempels.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.10",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "stef-sempels.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.stef-sempels.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.lars-francois.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::9",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.lars-francois.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.9",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "lars-francois.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.lars-francois.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.renzo-demuylder.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::7",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.renzo-demuylder.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.7",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "renzo-demuylder.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.renzo-demuylder.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.jenthe-vanzomeren.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::12",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.jenthe-vanzomeren.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.12",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "jenthe-vanzomeren.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.jenthe-vanzomeren.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.slimme-rik.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::1",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.slimme-rik.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.1",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "slimme-rik.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.slimme-rik.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.vincent-degreef.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::6",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.vincent-degreef.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.6",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "vincent-degreef.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.vincent-degreef.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.rein-vanwanseele.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::11",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.rein-vanwanseele.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.11",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "rein-vanwanseele.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.rein-vanwanseele.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
+    {
+      "comments": [],
+      "name": "ns.jasper-evens1.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "2001:6a8:2880:a020::8",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "AAAA"
+    },
+    {
+      "comments": [],
+      "name": "ns.jasper-evens1.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "193.191.176.8",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "A"
+    },
+    {
+      "comments": [],
+      "name": "jasper-evens1.sasm.uclllabs.be.",
+      "records": [
+        {
+          "content": "ns.jasper-evens1.sasm.uclllabs.be.",
+          "disabled": false
+        }
+      ],
+      "ttl": 3600,
+      "type": "NS"
+    },
     {
       "comments": [],
       "name": "sasm.uclllabs.be.",
@@ -58,8 +428,8 @@
   "soa_edit_api": "",
   "url": "/api/v1/servers/localhost/zones/sasm.uclllabs.be."
 }
-2025-06-05 16:49:03,902 - INFO - Zone: 176.191.193.in-addr.arpa
-2025-06-05 16:49:03,974 - INFO - {
+2025-06-06 10:46:50,932 - INFO - Zone: 176.191.193.in-addr.arpa
+2025-06-06 10:46:51,030 - INFO - {
   "account": "",
   "api_rectify": false,
   "catalog": "",
@@ -81,8 +451,8 @@
   "soa_edit_api": "",
   "url": "/api/v1/servers/localhost/zones/176.191.193.in-addr.arpa."
 }
-2025-06-05 16:49:03,974 - INFO - Zone: a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa
-2025-06-05 16:49:04,041 - INFO - {
+2025-06-06 10:46:51,030 - INFO - Zone: a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa
+2025-06-06 10:46:51,122 - INFO - {
   "account": "",
   "api_rectify": false,
   "catalog": "",
@@ -104,4 +474,63 @@
   "soa_edit_api": "",
   "url": "/api/v1/servers/localhost/zones/a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa."
 }
-2025-06-05 16:49:04,041 - INFO - ------------------------------------------------------------
+2025-06-06 10:46:51,123 - INFO - Loaded 11 students from processed_Emails.json
+2025-06-06 10:46:51,198 - WARNING - Zone slimme-rik.sasm.uclllabs.be not found
+2025-06-06 10:46:51,283 - INFO - Creating slave zone slimme-rik.sasm.uclllabs.be with masters 193.191.176.1, 2001:6a8:2880:a020::1
+2025-06-06 10:46:51,350 - WARNING - Zone maxim-audenaert.sasm.uclllabs.be not found
+2025-06-06 10:46:51,437 - INFO - Creating slave zone maxim-audenaert.sasm.uclllabs.be with masters 193.191.176.5, 2001:6a8:2880:a020::5
+2025-06-06 10:46:51,507 - WARNING - Zone vincent-degreef.sasm.uclllabs.be not found
+2025-06-06 10:46:51,583 - INFO - Creating slave zone vincent-degreef.sasm.uclllabs.be with masters 193.191.176.6, 2001:6a8:2880:a020::6
+2025-06-06 10:46:51,654 - WARNING - Zone renzo-demuylder.sasm.uclllabs.be not found
+2025-06-06 10:46:51,732 - INFO - Creating slave zone renzo-demuylder.sasm.uclllabs.be with masters 193.191.176.7, 2001:6a8:2880:a020::7
+2025-06-06 10:46:51,801 - WARNING - Zone jasper-evens1.sasm.uclllabs.be not found
+2025-06-06 10:46:51,873 - INFO - Creating slave zone jasper-evens1.sasm.uclllabs.be with masters 193.191.176.8, 2001:6a8:2880:a020::8
+2025-06-06 10:46:51,935 - WARNING - Zone lars-francois.sasm.uclllabs.be not found
+2025-06-06 10:46:52,012 - INFO - Creating slave zone lars-francois.sasm.uclllabs.be with masters 193.191.176.9, 2001:6a8:2880:a020::9
+2025-06-06 10:46:52,091 - WARNING - Zone stef-sempels.sasm.uclllabs.be not found
+2025-06-06 10:46:52,173 - INFO - Creating slave zone stef-sempels.sasm.uclllabs.be with masters 193.191.176.10, 2001:6a8:2880:a020::10
+2025-06-06 10:46:52,248 - WARNING - Zone rein-vanwanseele.sasm.uclllabs.be not found
+2025-06-06 10:46:52,341 - INFO - Creating slave zone rein-vanwanseele.sasm.uclllabs.be with masters 193.191.176.11, 2001:6a8:2880:a020::11
+2025-06-06 10:46:52,404 - WARNING - Zone jenthe-vanzomeren.sasm.uclllabs.be not found
+2025-06-06 10:46:52,494 - INFO - Creating slave zone jenthe-vanzomeren.sasm.uclllabs.be with masters 193.191.176.12, 2001:6a8:2880:a020::12
+2025-06-06 10:46:52,559 - WARNING - Zone rezan-yavuz.sasm.uclllabs.be not found
+2025-06-06 10:46:52,644 - INFO - Creating slave zone rezan-yavuz.sasm.uclllabs.be with masters 193.191.176.13, 2001:6a8:2880:a020::13
+2025-06-06 10:46:52,716 - WARNING - Zone robin-huysegoms.sasm.uclllabs.be not found
+2025-06-06 10:46:52,790 - INFO - Creating slave zone robin-huysegoms.sasm.uclllabs.be with masters 193.191.176.14, 2001:6a8:2880:a020::14
+2025-06-06 10:46:52,790 - INFO - Adding NS records and glue A/AAAA to parent zone sasm.uclllabs.be...
+2025-06-06 10:46:52,869 - INFO - \u2705 Found parent zone: sasm.uclllabs.be
+2025-06-06 10:46:52,869 - INFO - \u2705 NS records for slimme-rik.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.slimme-rik.sasm.uclllabs.be.
+2025-06-06 10:46:52,869 - INFO - \U0001f527 A glue record for ns.slimme-rik.sasm.uclllabs.be. \u2192 193.191.176.1
+2025-06-06 10:46:52,869 - INFO - \U0001f527 AAAA glue record for ns.slimme-rik.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::1
+2025-06-06 10:46:52,870 - INFO - \u2705 NS records for maxim-audenaert.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.maxim-audenaert.sasm.uclllabs.be.
+2025-06-06 10:46:52,870 - INFO - \U0001f527 A glue record for ns.maxim-audenaert.sasm.uclllabs.be. \u2192 193.191.176.5
+2025-06-06 10:46:52,870 - INFO - \U0001f527 AAAA glue record for ns.maxim-audenaert.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::5
+2025-06-06 10:46:52,870 - INFO - \u2705 NS records for vincent-degreef.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.vincent-degreef.sasm.uclllabs.be.
+2025-06-06 10:46:52,870 - INFO - \U0001f527 A glue record for ns.vincent-degreef.sasm.uclllabs.be. \u2192 193.191.176.6
+2025-06-06 10:46:52,870 - INFO - \U0001f527 AAAA glue record for ns.vincent-degreef.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::6
+2025-06-06 10:46:52,870 - INFO - \u2705 NS records for renzo-demuylder.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.renzo-demuylder.sasm.uclllabs.be.
+2025-06-06 10:46:52,870 - INFO - \U0001f527 A glue record for ns.renzo-demuylder.sasm.uclllabs.be. \u2192 193.191.176.7
+2025-06-06 10:46:52,870 - INFO - \U0001f527 AAAA glue record for ns.renzo-demuylder.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::7
+2025-06-06 10:46:52,870 - INFO - \u2705 NS records for jasper-evens1.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.jasper-evens1.sasm.uclllabs.be.
+2025-06-06 10:46:52,870 - INFO - \U0001f527 A glue record for ns.jasper-evens1.sasm.uclllabs.be. \u2192 193.191.176.8
+2025-06-06 10:46:52,870 - INFO - \U0001f527 AAAA glue record for ns.jasper-evens1.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::8
+2025-06-06 10:46:52,870 - INFO - \u2705 NS records for lars-francois.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.lars-francois.sasm.uclllabs.be.
+2025-06-06 10:46:52,870 - INFO - \U0001f527 A glue record for ns.lars-francois.sasm.uclllabs.be. \u2192 193.191.176.9
+2025-06-06 10:46:52,870 - INFO - \U0001f527 AAAA glue record for ns.lars-francois.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::9
+2025-06-06 10:46:52,870 - INFO - \u2705 NS records for stef-sempels.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.stef-sempels.sasm.uclllabs.be.
+2025-06-06 10:46:52,870 - INFO - \U0001f527 A glue record for ns.stef-sempels.sasm.uclllabs.be. \u2192 193.191.176.10
+2025-06-06 10:46:52,870 - INFO - \U0001f527 AAAA glue record for ns.stef-sempels.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::10
+2025-06-06 10:46:52,871 - INFO - \u2705 NS records for rein-vanwanseele.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.rein-vanwanseele.sasm.uclllabs.be.
+2025-06-06 10:46:52,871 - INFO - \U0001f527 A glue record for ns.rein-vanwanseele.sasm.uclllabs.be. \u2192 193.191.176.11
+2025-06-06 10:46:52,871 - INFO - \U0001f527 AAAA glue record for ns.rein-vanwanseele.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::11
+2025-06-06 10:46:52,871 - INFO - \u2705 NS records for jenthe-vanzomeren.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.jenthe-vanzomeren.sasm.uclllabs.be.
+2025-06-06 10:46:52,871 - INFO - \U0001f527 A glue record for ns.jenthe-vanzomeren.sasm.uclllabs.be. \u2192 193.191.176.12
+2025-06-06 10:46:52,871 - INFO - \U0001f527 AAAA glue record for ns.jenthe-vanzomeren.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::12
+2025-06-06 10:46:52,871 - INFO - \u2705 NS records for rezan-yavuz.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.rezan-yavuz.sasm.uclllabs.be.
+2025-06-06 10:46:52,871 - INFO - \U0001f527 A glue record for ns.rezan-yavuz.sasm.uclllabs.be. \u2192 193.191.176.13
+2025-06-06 10:46:52,871 - INFO - \U0001f527 AAAA glue record for ns.rezan-yavuz.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::13
+2025-06-06 10:46:52,871 - INFO - \u2705 NS records for robin-huysegoms.sasm.uclllabs.be. \u2192 ns1.uclllabs.be., ns2.uclllabs.be., ns.robin-huysegoms.sasm.uclllabs.be.
+2025-06-06 10:46:52,871 - INFO - \U0001f527 A glue record for ns.robin-huysegoms.sasm.uclllabs.be. \u2192 193.191.176.14
+2025-06-06 10:46:52,871 - INFO - \U0001f527 AAAA glue record for ns.robin-huysegoms.sasm.uclllabs.be. \u2192 2001:6a8:2880:a020::14
+2025-06-06 10:46:52,871 - INFO - \U0001f680 Patching parent zone sasm.uclllabs.be with full NS + glue records...
+2025-06-06 10:46:52,991 - INFO - ------------------------------------------------------------

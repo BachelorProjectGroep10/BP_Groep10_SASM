@@ -124,7 +124,6 @@ def add_ns_records_parent_zone():
         ("sasm.uclllabs.be.", "NS"): [
             "ns1.uclllabs.be.",
             "ns2.uclllabs.be.",
-            "ns.slimme-rik.sasm.uclllabs.be."
         ],
         ("ns.slimme-rik.sasm.uclllabs.be.", "A"): ["193.191.176.1"],
         ("ns.slimme-rik.sasm.uclllabs.be.", "AAAA"): ["2001:6a8:2880:a020::1"]
