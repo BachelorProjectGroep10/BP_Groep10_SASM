@@ -96,7 +96,7 @@ def create_slave_zones_from_students(students):
             logging.error(f"Failed creating zone {zone_name}: {e}")
 
 def add_ns_records_parent_zone_from_students(students):
-    """Add NS and glue A/AAAA records to sasm.uclllabs.be for each student."""
+    """Add NS and glue A/AAAA records to sasm.uclllabs.be for each student, skipping if already present."""
 
     zone_name = "sasm.uclllabs.be"
     zone = get_zone(zone_name)
@@ -108,6 +108,7 @@ def add_ns_records_parent_zone_from_students(students):
     logging.info(f"✅ Found parent zone: {zone_name}")
     rrsets = zone.get("rrsets", [])
     rrset_map = {(r["name"], r["type"]): r for r in rrsets}
+    updated_rrsets = {}
 
     for student in students:
         zone_fqdn = student["dns_zone"].rstrip(".") + "."
@@ -115,89 +116,98 @@ def add_ns_records_parent_zone_from_students(students):
         ipv4 = student["ipv4"]
         ipv6 = student["ipv6"]
 
-        # NS record for the student's zone pointing to 3 nameservers
+        # --- NS Records ---
         ns_key = (zone_fqdn, "NS")
-        ns_targets = [
+        desired_ns_targets = {
             "ns1.uclllabs.be.",
             "ns2.uclllabs.be.",
             ns_name
-        ]
-
-        existing_records = rrset_map.get(ns_key, {}).get("records", [])
-        existing_contents = {r["content"] for r in existing_records}
-
-        new_ns_records = [
-            {"content": target, "disabled": False}
-            for target in ns_targets
-            if target not in existing_contents
-        ]
-
-        combined_ns_records = existing_records + new_ns_records
-
-        rrset_map[ns_key] = {
-            "name": zone_fqdn,
-            "type": "NS",
-            "ttl": 3600,
-            "changetype": "REPLACE",
-            "records": combined_ns_records
         }
 
-        logging.info(f"✅ NS records for {zone_fqdn} → {', '.join(ns_targets)}")
+        existing_ns = rrset_map.get(ns_key, {}).get("records", [])
+        existing_ns_contents = {r["content"] for r in existing_ns}
 
-        # Glue A record
-        rrset_map[(ns_name, "A")] = {
-            "name": ns_name,
-            "type": "A",
-            "ttl": 3600,
-            "changetype": "REPLACE",
-            "records": [{"content": ipv4, "disabled": False}]
-        }
+        if not desired_ns_targets.issubset(existing_ns_contents):
+            # Add only missing NS records
+            new_records = existing_ns + [
+                {"content": target, "disabled": False}
+                for target in desired_ns_targets
+                if target not in existing_ns_contents
+            ]
+            updated_rrsets[ns_key] = {
+                "name": zone_fqdn,
+                "type": "NS",
+                "ttl": 3600,
+                "changetype": "REPLACE",
+                "records": new_records
+            }
+            logging.info(f"✅ Updating NS records for {zone_fqdn} → {', '.join(desired_ns_targets)}")
+        else:
+            logging.info(f"ℹ️ NS records for {zone_fqdn} already up to date.")
 
-        logging.info(f"🔧 A glue record for {ns_name} → {ipv4}")
+        # --- A Glue Record ---
+        a_key = (ns_name, "A")
+        existing_a = rrset_map.get(a_key, {}).get("records", [])
+        a_exists = any(r["content"] == ipv4 for r in existing_a)
 
-        # Glue AAAA record
-        rrset_map[(ns_name, "AAAA")] = {
-            "name": ns_name,
-            "type": "AAAA",
-            "ttl": 3600,
-            "changetype": "REPLACE",
-            "records": [{"content": ipv6, "disabled": False}]
-        }
+        if not a_exists:
+            updated_rrsets[a_key] = {
+                "name": ns_name,
+                "type": "A",
+                "ttl": 3600,
+                "changetype": "REPLACE",
+                "records": [{"content": ipv4, "disabled": False}]
+            }
+            logging.info(f"🔧 Added A glue record for {ns_name} → {ipv4}")
+        else:
+            logging.info(f"ℹ️ A record for {ns_name} already exists with {ipv4}")
 
-        logging.info(f"🔧 AAAA glue record for {ns_name} → {ipv6}")
+        # --- AAAA Glue Record ---
+        aaaa_key = (ns_name, "AAAA")
+        existing_aaaa = rrset_map.get(aaaa_key, {}).get("records", [])
+        aaaa_exists = any(r["content"] == ipv6 for r in existing_aaaa)
 
-    new_rrsets = []
-    for rr in rrset_map.values():
-        rr["changetype"] = rr.get("changetype", "REPLACE")
-        new_rrsets.append(rr)
+        if not aaaa_exists:
+            updated_rrsets[aaaa_key] = {
+                "name": ns_name,
+                "type": "AAAA",
+                "ttl": 3600,
+                "changetype": "REPLACE",
+                "records": [{"content": ipv6, "disabled": False}]
+            }
+            logging.info(f"🔧 Added AAAA glue record for {ns_name} → {ipv6}")
+        else:
+            logging.info(f"ℹ️ AAAA record for {ns_name} already exists with {ipv6}")
 
-    logging.info(f"🚀 Patching parent zone {zone_name} with full NS + glue records...")
-    api_patch(f"/zones/{zone_name}", {"rrsets": new_rrsets})
+    if updated_rrsets:
+        logging.info(f"🚀 Patching parent zone {zone_name} with {len(updated_rrsets)} updated RRsets...")
+        api_patch(f"/zones/{zone_name}", {"rrsets": list(updated_rrsets.values())})
+    else:
+        logging.info(f"✅ No changes needed. All NS and glue records are already present.")
 
-def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
-    zone = get_zone(ipv4_ptr_zone)
-    if not zone:
-        logging.error(f"❌ PTR zone {ipv4_ptr_zone} does not exist.")
-        return
+def ipv4_to_arpa(ipv4):
+    """Convert IPv4 address to full reverse PTR name."""
+    return ".".join(reversed(ipv4.split("."))) + ".in-addr.arpa"
 
-    ptr_name = ptr_name if ptr_name.endswith('.') else f"{ptr_name}."
-    ptr_target = ptr_target if ptr_target.endswith('.') else f"{ptr_target}."
 
-    ptr_rrset = {
-        "name": ptr_name,
+
+def create_ptr_record(zone_name, full_ptr_name, ptr_target):
+    fqdn = ptr_target if ptr_target.endswith('.') else ptr_target + '.'
+    full_ptr_name = full_ptr_name if full_ptr_name.endswith('.') else full_ptr_name + '.'
+
+    rrset = {
+        "name": full_ptr_name,
         "type": "PTR",
         "ttl": 3600,
         "changetype": "REPLACE",
-        "records": [{"content": ptr_target, "disabled": False}]
+        "records": [{"content": fqdn, "disabled": False}]
     }
 
-    logging.info(f"🔁 Adding/updating PTR record {ptr_name} → {ptr_target}")
-    api_patch(f"/zones/{ipv4_ptr_zone}", {"rrsets": [ptr_rrset]})
+    logging.info(f"🔁 Adding PTR {full_ptr_name} → {fqdn} in zone {zone_name}")
+    api_patch(f"/zones/{zone_name}", {"rrsets": [rrset]})
 
 def ipv6_to_arpa(ipv6):
-    """
-    Convert an IPv6 address to its full PTR-compatible .ip6.arpa name.
-    """
+    """Convert IPv6 address to full reverse PTR name (.ip6.arpa)."""
     ip = ipaddress.IPv6Address(ipv6)
     hex_digits = ip.exploded.replace(":", "")
     reversed_nibbles = ".".join(reversed(hex_digits))
@@ -225,8 +235,10 @@ def create_ipv6_ptr_record(ptr_zone, ipv6_addr, ptr_target):
     api_patch(f"/zones/{ptr_zone}", {"rrsets": [ptr_rrset]})
 
 def create_ptr_records_from_students(students):
+    logging.info("Creating PTR records for all students...")
     ipv4_ptr_zone = "176.191.193.in-addr.arpa"
     ipv6_ptr_zone = "a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa"
+
     for student in students:
         hostname = student.get("hostname")
         dns_zone = student.get("dns_zone")
@@ -237,19 +249,33 @@ def create_ptr_records_from_students(students):
             logging.warning(f"⚠️ Skipping student (missing hostname or dns_zone): {student}")
             continue
 
-        ptr_target = f"mx.{hostname}.{dns_zone}.uclllabs.be"
+        # Construct target FQDN
+        zone_part = dns_zone.rstrip(".").replace(".uclllabs.be", "")
+        ptr_target = f"mx.{hostname}.{zone_part}.uclllabs.be."
 
+        # ---- IPv4 PTR ----
         if ipv4:
-            try:
-                create_ptr_record(ipv4_ptr_zone, ipv4, ptr_target)
-            except requests.HTTPError as e:
-                logging.error(f"❌ Failed to create IPv4 PTR for {ipv4}: {e}")
+            ptr_name = ipv4_to_arpa(ipv4)
+            if ptr_name.endswith(ipv4_ptr_zone):
+                try:
+                    create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target)
+                except requests.HTTPError as e:
+                    logging.error(f"❌ Failed to create IPv4 PTR for {ipv4}: {e}")
+            else:
+                logging.warning(f"⚠️ Skipping IPv4 PTR {ipv4}, doesn't match zone {ipv4_ptr_zone}")
 
+        # ---- IPv6 PTR ----
         if ipv6:
-            try:
-                create_ipv6_ptr_record(ipv6_ptr_zone, ipv6, ptr_target)
-            except requests.HTTPError as e:
-                logging.error(f"❌ Failed to create IPv6 PTR for {ipv6}: {e}")
+            ptr_name = ipv6_to_arpa(ipv6)
+            if ptr_name.endswith(ipv6_ptr_zone):
+                try:
+                    create_ptr_record(ipv6_ptr_zone, ptr_name, ptr_target)
+                except requests.HTTPError as e:
+                    logging.error(f"❌ Failed to create IPv6 PTR for {ipv6}: {e}")
+            else:
+                logging.warning(f"⚠️ Skipping IPv6 PTR {ipv6}, doesn't match zone {ipv6_ptr_zone}")
+
+
 
 def execute_dns():
     list_all_zones()
