@@ -1,3 +1,4 @@
+import ipaddress
 import json
 import re
 import requests
@@ -122,7 +123,6 @@ def add_ns_records_parent_zone_from_students(students):
             ns_name
         ]
 
-        # Deduplicate any existing entries
         existing_records = rrset_map.get(ns_key, {}).get("records", [])
         existing_contents = {r["content"] for r in existing_records}
 
@@ -166,7 +166,6 @@ def add_ns_records_parent_zone_from_students(students):
 
         logging.info(f"🔧 AAAA glue record for {ns_name} → {ipv6}")
 
-    # Ensure all rrsets have changetype set
     new_rrsets = []
     for rr in rrset_map.values():
         rr["changetype"] = rr.get("changetype", "REPLACE")
@@ -175,6 +174,82 @@ def add_ns_records_parent_zone_from_students(students):
     logging.info(f"🚀 Patching parent zone {zone_name} with full NS + glue records...")
     api_patch(f"/zones/{zone_name}", {"rrsets": new_rrsets})
 
+def create_ptr_record(ipv4_ptr_zone, ptr_name, ptr_target):
+    zone = get_zone(ipv4_ptr_zone)
+    if not zone:
+        logging.error(f"❌ PTR zone {ipv4_ptr_zone} does not exist.")
+        return
+
+    ptr_name = ptr_name if ptr_name.endswith('.') else f"{ptr_name}."
+    ptr_target = ptr_target if ptr_target.endswith('.') else f"{ptr_target}."
+
+    ptr_rrset = {
+        "name": ptr_name,
+        "type": "PTR",
+        "ttl": 3600,
+        "changetype": "REPLACE",
+        "records": [{"content": ptr_target, "disabled": False}]
+    }
+
+    logging.info(f"🔁 Adding/updating PTR record {ptr_name} → {ptr_target}")
+    api_patch(f"/zones/{ipv4_ptr_zone}", {"rrsets": [ptr_rrset]})
+
+def ipv6_to_arpa(ipv6):
+    """
+    Convert an IPv6 address to its full PTR-compatible .ip6.arpa name.
+    """
+    ip = ipaddress.IPv6Address(ipv6)
+    hex_digits = ip.exploded.replace(":", "")
+    reversed_nibbles = ".".join(reversed(hex_digits))
+    return reversed_nibbles + ".ip6.arpa"
+
+def create_ipv6_ptr_record(ptr_zone, ipv6_addr, ptr_target):
+    full_ptr_name = ipv6_to_arpa(ipv6_addr)
+    logging.debug(f"Calculated full_ptr_name: {full_ptr_name}")
+    logging.debug(f"Checking if {full_ptr_name} ends with {ptr_zone}")
+
+    if not full_ptr_name.endswith(ptr_zone):
+        logging.warning(f"⚠️ Skipping {ipv6_addr}: not in PTR zone {ptr_zone}")
+        return
+
+    fqdn = ptr_target if ptr_target.endswith('.') else f"{ptr_target}."
+    ptr_rrset = {
+        "name": full_ptr_name + ".",
+        "type": "PTR",
+        "ttl": 3600,
+        "changetype": "REPLACE",
+        "records": [{"content": fqdn, "disabled": False}]
+    }
+
+    logging.info(f"🔁 Adding/updating IPv6 PTR record {full_ptr_name} → {fqdn}")
+    api_patch(f"/zones/{ptr_zone}", {"rrsets": [ptr_rrset]})
+
+def create_ptr_records_from_students(students):
+    ipv4_ptr_zone = "176.191.193.in-addr.arpa"
+    ipv6_ptr_zone = "a.0.8.8.2.8.a.6.0.1.0.0.2.ip6.arpa"
+    for student in students:
+        hostname = student.get("hostname")
+        dns_zone = student.get("dns_zone")
+        ipv4 = student.get("ipv4")
+        ipv6 = student.get("ipv6")
+
+        if not hostname or not dns_zone:
+            logging.warning(f"⚠️ Skipping student (missing hostname or dns_zone): {student}")
+            continue
+
+        ptr_target = f"mx.{hostname}.{dns_zone}.uclllabs.be"
+
+        if ipv4:
+            try:
+                create_ptr_record(ipv4_ptr_zone, ipv4, ptr_target)
+            except requests.HTTPError as e:
+                logging.error(f"❌ Failed to create IPv4 PTR for {ipv4}: {e}")
+
+        if ipv6:
+            try:
+                create_ipv6_ptr_record(ipv6_ptr_zone, ipv6, ptr_target)
+            except requests.HTTPError as e:
+                logging.error(f"❌ Failed to create IPv6 PTR for {ipv6}: {e}")
 
 def execute_dns():
     list_all_zones()
@@ -191,7 +266,6 @@ def execute_dns():
 
     verify_zones(clean_zones)
 
-
     try:
         with open('Output/processed_Emails.json', 'r', encoding='utf-8') as f:
             students = json.load(f)
@@ -205,5 +279,7 @@ def execute_dns():
     logging.info("Adding NS records and glue A/AAAA to parent zone sasm.uclllabs.be...")
     add_ns_records_parent_zone_from_students(students)
 
-    logging.info("-" * 60)
+    logging.info("🧠 Creating PTR records for all students...")
+    create_ptr_records_from_students(students)
 
+    logging.info("-" * 60)
